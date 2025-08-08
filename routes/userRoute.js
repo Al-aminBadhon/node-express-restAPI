@@ -1,9 +1,9 @@
 const express =require('express');
 const router = express();
-
 router.use(express.json());
-
 const path = require('path');
+
+const userController = require('../controllers/userController');
 // file uploading functions
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -17,5 +17,7 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({storage:storage});
+
+router.post('/register', upload.single('image'), userController.userRegister);
 
 module. exports = router;
