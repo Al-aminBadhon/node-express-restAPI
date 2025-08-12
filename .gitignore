@@ -1,8 +1,3 @@
-# .gitignore file for Node.js projects
-
-# Dependency directories
 node_modules/
-
-# Optional: Other common exclusions for Node.js projects
-.env
+.env/
 .vscode/
