@@ -20,18 +20,18 @@ const sendMail = async (email, subject, body) => {
             subject,
             html:body
         }
-        // await transport.sendMail(mailData, (error) => {
-        //     if(error){
-        //         console.log('error message from send mail '+ error.message);
-        //     }
-        //     else{
-        //         console.log('Mail sent from sendMail ', info.messageId);
-        //     }
+        await transport.sendMail(mailData, (error, info) => {
+            if(error){
+                console.log('error message from send mail '+ error.message);
+            }
+            else{
+                console.log('Mail sent from sendMail ', info.messageId);
+            }
             
-        // });
+        });
 
-        const info = await transport.sendMail(mailData);
-        console.log(`Mail sent: ${info.messageId}`);
+        // const info = await transport.sendMail(mailData);
+        // console.log(`Mail sent: ${info.messageId}`);
 
         
     }
