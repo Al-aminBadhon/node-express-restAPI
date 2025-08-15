@@ -17,11 +17,21 @@ exports.registerValidator = [
         minUppercase:1,
     }),
     validator.check('image').custom((value, {req}) => {
+        if(!req.file) {
+            return true;
+        }
         if(req.file.mimetype === 'image/jpeg' || req.file.mimetype === 'image/png' || req.file.mimetype === 'image/jpg'){
             return true;
         }
-        else{
-            return false;
-        }
+        return false;
+        
     }).withMessage('please upload image with jpg/jpeg/png format')
+]
+exports.forgotPasswordValidator = [
+    validator.check('email', 'Valid email is required').isEmail().normalizeEmail({
+        gmail_remove_dots: false,
+    })
+];
+exports.loginValidator = [
+
 ]
