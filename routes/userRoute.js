@@ -2,8 +2,9 @@ const express =require('express');
 const router = express();
 router.use(express.json());
 const path = require('path');
-const {registerValidator} = require('../helper/validation')
+const {registerValidator, forgotPasswordValidator} = require('../helper/validation')
 const userController = require('../controllers/userController');
+
 // file uploading functions
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -31,5 +32,6 @@ const upload = multer({
 });
 
 router.post('/register', upload.single('image'), registerValidator, userController.userRegister);
+router.post('/forgot-password', forgotPasswordValidator, userController.forgotPassword);
 
 module. exports = router;
