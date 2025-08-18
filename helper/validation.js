@@ -32,6 +32,11 @@ exports.forgotPasswordValidator = [
         gmail_remove_dots: false,
     })
 ];
+exports.sendMailVerificationValidator = [
+    validator.check('email', 'Valid email is required').isEmail().normalizeEmail({
+        gmail_remove_dots: false,
+    })
+];
 exports.loginValidator = [
 
 ]

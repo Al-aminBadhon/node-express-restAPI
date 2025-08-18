@@ -4,6 +4,7 @@ const validator = require('express-validator');
 const mailer = require('../helper/mailer');
 const PasswordReset = require('../models/passwordResetModel');
 const randomString = require('randomstring');
+const { sendMailVerificationValidator } = require('../helper/validation');
 
 const userRegister = async(req, res) => {
 
@@ -141,9 +142,58 @@ const forgotPassword = async (req, res) => {
     }
 };
 
+const sendMailVerification = async (req, res) => {
+    try {
+        const errors = validator.validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                msg: 'Errors',
+                errors: errors.array()
+            });
+        }
+
+        const { email } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            // Generic response for security
+            return res.status(200).json({
+                success: true,
+                msg: 'If your email is registered, you will receive a verification link'
+            });
+        }
+
+        // Check if already verified
+        if (user.isVerfied) {
+            return res.status(400).json({
+                success: false,
+                msg: 'Email is already verified'
+            });
+        }
+
+        // Resend verification email
+        const msg = `<p>This is a confirmation email for user - ${user.name} </p>. 
+        Please <a href="${process.env.VERFICATION_LINK}${user._id}">Verify</a> your account.`;
+        
+        mailer.sendMail(email, 'Email Verification', msg);
+
+        return res.status(200).json({
+            success: true,
+            msg: 'Verification email sent successfully'
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            msg: error.message
+        });
+    }
+};
+
 
 module.exports = {
     userRegister,
     mailVerification,
+    sendMailVerification,
     forgotPassword
 };
