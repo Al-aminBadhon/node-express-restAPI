@@ -6,6 +6,7 @@ const PasswordReset = require("../models/passwordResetModel");
 const randomString = require("randomstring");
 const { sendMailVerificationValidator } = require("../helper/validation");
 const jwt = require("jsonwebtoken");
+const BlackList = require("../models/blackList");
 
 const userRegister = async (req, res) => {
   try {
@@ -261,11 +262,36 @@ const userProfile = async (req, res) => {
       msg: "User profile data",
       data: userDetails,
     });
-  } catch {}
-  return res.status(400).json({
-    success: false,
-    msg: error.msg,
-  });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      msg: error.msg,
+    });
+  }
+};
+const userLogout = async (req, res) => {
+  try {
+    const bearerToken = req.token;
+    console.log("logout token is :", bearerToken);
+    const newBlackList = new BlackList({
+      token: bearerToken,
+    });
+    await newBlackList.save();
+    console.log("blacklisted");
+
+    res.setHeader("Clear-site-Data", '"cookies", "storage"');
+    console.log("cleared cache");
+
+    return res.status(200).json({
+      success: true,
+      msg: "Successfully logged out!!",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      msg: error.msg,
+    });
+  }
 };
 
 module.exports = {
@@ -276,4 +302,5 @@ module.exports = {
   resetPassword,
   loginUser,
   userProfile,
+  userLogout,
 };

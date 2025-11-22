@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
 const config = process.env;
+const BlackList = require("../models/blackList");
 
 const verifyToken = async (req, res, next) => {
-  console.log("request body is ", req.headers["authorization"]);
-
   // Safe token extraction from multiple sources
   const bodyToken = req.body ? req.body.token : undefined;
   const queryToken = req.query ? req.query.token : undefined;
@@ -27,7 +26,6 @@ const verifyToken = async (req, res, next) => {
   }
 
   if (!token) {
-    console.log("request 2nd............................");
     return res.status(403).json({
       success: false,
       msg: "A token is required for authentication",
@@ -35,10 +33,19 @@ const verifyToken = async (req, res, next) => {
   }
   try {
     const bearerToken = token.split(" ")[1];
+    const blackListed = BlackList.findOne({ token: bearerToken });
+    if (blackListed) {
+      return res.status(400).json({
+        success: false,
+        msg: "The session has expired, please try again",
+      });
+    }
+
     const decodedData = jwt.verify(bearerToken, config.ACCESS_TOKEN_SECRET);
     req.user = decodedData;
+    req.token = bearerToken;
   } catch (error) {
-    return res.status(403).json({
+    return res.status(401).json({
       success: false,
       msg: "Invalid token",
     });
