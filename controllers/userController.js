@@ -65,7 +65,7 @@ const mailVerification = async (req, res) => {
 
     const userId = await User.findOne({ _id: req.query.id });
     if (userId) {
-      if (userId.isVerfied == 1) {
+      if (userId.isVerified == 1) {
         return res.render("mail-verification", {
           message: "Mail already verified succesfully!",
         });
@@ -74,7 +74,7 @@ const mailVerification = async (req, res) => {
         { _id: req.query.id },
         {
           $set: {
-            isVerfied: 1,
+            isVerified: 1,
           },
         }
       );

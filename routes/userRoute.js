@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-router.use(express.json());
+// router.use(express.json());
 const path = require("path");
 const {
   registerValidator,
@@ -14,7 +14,7 @@ const rateLimit = require("express-rate-limit");
 
 const resendLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 3 requests per window
+  max: 3, // Limit each IP to 3 requests per window
   message: "Too many verification requests, please try again later",
 });
 // file uploading functions
@@ -50,6 +50,7 @@ router.post(
 );
 router.post(
   "/forgot-password",
+  resendLimiter,
   forgotPasswordValidator,
   userController.forgotPassword
 );

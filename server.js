@@ -1,21 +1,37 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const conn = require('./helper/connectionStrings')
-const port = process.env.SERVER_PORT || 3000;
-const userRoute = require('./routes/userRoute');
-const authRoute = require('./routes/authRoute');
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+
+const conn = require("./helper/connectionStrings");
+const userRoute = require("./routes/userRoute");
+const authRoute = require("./routes/authRoute");
+
 const app = express();
-app.set('view engine', 'ejs');
-app.set('views', './views');
-mongoose.connect(conn);
+const port = process.env.SERVER_PORT || 3000;
 
-app.use('/api', userRoute);
-app.use('/', authRoute);
+app.use(
+  cors({
+    origin: "http://localhost:8080", // my frontend
+    credentials: true,
+  })
+);
 
-app.listen(port, ()=> {
-    console.log(`server listening on ${port} .....`)
-})
+// Global body parsers
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+app.set("view engine", "ejs");
+app.set("views", "./views");
 
+app.use("/api", userRoute);
+app.use("/", authRoute);
 
+mongoose
+  .connect(conn)
+  .then(() => console.log("MongoDB connected"))
+  .catch(console.error);
+
+app.listen(port, () => {
+  console.log(`server listening on ${port} .....`);
+});
