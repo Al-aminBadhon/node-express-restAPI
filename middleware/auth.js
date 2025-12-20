@@ -33,7 +33,10 @@ const verifyToken = async (req, res, next) => {
   }
   try {
     const bearerToken = token.split(" ")[1];
-    const blackListed = BlackList.findOne({ token: bearerToken });
+    console.log(bearerToken);
+
+    const blackListed = await BlackList.findOne({ token: bearerToken });
+    console.log(blackListed ? "true" : "false");
     if (blackListed) {
       return res.status(400).json({
         success: false,

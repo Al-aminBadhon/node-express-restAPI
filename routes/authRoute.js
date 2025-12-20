@@ -1,13 +1,12 @@
-const express =require('express');
-const router = express();
+const express = require("express");
+const router = express.Router();
 router.use(express.json());
 
-
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({extended:true}));
+router.use(bodyParser.urlencoded({ extended: true }));
 
-const userConrtroller = require('../controllers/userController');
+const userConrtroller = require("../controllers/userController");
 
-router.get('/mail-verification', userConrtroller.mailVerification)
-module. exports = router;
+router.get("/mail-verification", userConrtroller.mailVerification);
+module.exports = router;
