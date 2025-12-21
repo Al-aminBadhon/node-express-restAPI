@@ -256,11 +256,11 @@ const loginUser = async (req, res) => {
 const userProfile = async (req, res) => {
   try {
     const userDetails = req.user.user;
-
+    console.log("User details from userProfile", userDetails);
     return res.status(200).json({
       success: true,
       msg: "User profile data",
-      data: userDetails,
+      user: userDetails,
     });
   } catch (error) {
     return res.status(400).json({

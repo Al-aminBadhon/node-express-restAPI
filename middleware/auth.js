@@ -33,10 +33,10 @@ const verifyToken = async (req, res, next) => {
   }
   try {
     const bearerToken = token.split(" ")[1];
-    console.log(bearerToken);
+    // console.log(bearerToken);
 
     const blackListed = await BlackList.findOne({ token: bearerToken });
-    console.log(blackListed ? "true" : "false");
+    // console.log(blackListed ? "true" : "false");
     if (blackListed) {
       return res.status(400).json({
         success: false,
@@ -45,6 +45,8 @@ const verifyToken = async (req, res, next) => {
     }
 
     const decodedData = jwt.verify(bearerToken, config.ACCESS_TOKEN_SECRET);
+    console.log("Decoded Data", decodedData);
+
     req.user = decodedData;
     req.token = bearerToken;
   } catch (error) {

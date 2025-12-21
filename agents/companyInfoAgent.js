@@ -4,7 +4,6 @@ const {
   getCachedResult,
   saveCachedResult,
 } = require("../services/cacheService");
-const { JsonOutputParser } = require("@langchain/core/output_parsers");
 
 function getNextMidnight() {
   const now = new Date();
@@ -26,36 +25,30 @@ exports.runCompanyInfoAgent = async (ticker) => {
   // Call LLM (ONLY once per day) as intial search will save cache data
   const llm = getGroqLLM();
 
-  //   const prompt1 = new PromptTemplate({
-  //     template: `
-  // You are a financial data assistant.
-
-  // Generate a concise company profile for {ticker}.
-
-  // Rules:
-  // - Keep summary under 80 words
-  // - Use realistic but approximate values
-  // - Do NOT include disclaimers
-
-  // Return a JSON object with: name, founded, ceo, headquarters, industry, marketCap, peRatio, products[], customers, summary
-  // `,
   const prompt = new PromptTemplate({
     template: `
 You are a financial data assistant.
 
-Task:
-- Generate a concise company profile for {ticker}
-- Keep summary under 80 words
-- Give 3 short bullet points
-- Use realistic but approximate values
-- Output JSON only
+Instructions:
+- Generate a concise company profile for the stock ticker "{ticker}"
+- Keep the company summary under 80 words
+- Respond ONLY with valid JSON
+- Do NOT include markdown, comments, or explanations
+- Follow the exact JSON structure below
 
-JSON format:
+JSON structure:
 {{
   "name": "",
+  "founded": "",
+  "ceo": "",
+  "headquarters": "",
+  "industry": "",
+  "marketCap": "",
+  "peRatio": "",
+  "customers": "",
   "summary": "",
   "products": []
-}}
+  }}
 `,
     inputVariables: ["ticker"],
   });
@@ -71,8 +64,8 @@ JSON format:
     ticker,
     "companyInfo",
     parsed,
-    null, // TTL not used
-    getNextMidnight() // absolute expiry
+    24 * 60 * 60 * 1000, // TTL 24 hours in milliseconds
+    null // no absolute expiry
   );
 
   return {

@@ -31,7 +31,7 @@ app.use("/api", researchRoute);
 
 mongoose
   .connect(conn)
-  .then(() => console.log("MongoDB connected"))
+  .then(console.log("MongoDB Connected"))
   .catch(console.error);
 
 app.listen(port, () => {
