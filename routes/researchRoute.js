@@ -10,5 +10,10 @@ router.get(
   auth,
   researchController.getAnalystPrediction
 );
+router.get(
+  "/research/guideline/:ticker",
+  auth,
+  researchController.getGuidelinesInfo
+);
 
 module.exports = router;

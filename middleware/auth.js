@@ -45,7 +45,6 @@ const verifyToken = async (req, res, next) => {
     }
 
     const decodedData = jwt.verify(bearerToken, config.ACCESS_TOKEN_SECRET);
-    console.log("Decoded Data", decodedData);
 
     req.user = decodedData;
     req.token = bearerToken;
